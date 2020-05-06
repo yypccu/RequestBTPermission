@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 
-class BLEScanReceiver : BroadcastReceiver() {
+class BTScanReceiver : BroadcastReceiver() {
 
     private val TAG = this.javaClass.simpleName
 

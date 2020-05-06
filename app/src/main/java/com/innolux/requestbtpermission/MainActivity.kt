@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private val REQUEST_CODE = 100  // Can be any integer
     var bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-    private var bleScanReceiver = BLEScanReceiver()
+    private var btScanReceiver = BTScanReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,19 +24,12 @@ class MainActivity : AppCompatActivity() {
 
         var btnScanToggle: Button = findViewById(R.id.main_startScan_btn)
         btnScanToggle.setOnClickListener{
-            var permissions: ArrayList<String> = ArrayList()
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH)
-                    != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH)
-            }
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN)
-                    != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_ADMIN)
-            }
-
-            if (permissions.size != 0) {    // There are some permissions not granted.
-                    ActivityCompat.requestPermissions(this,
-                            permissions.toArray() as Array<out String>, REQUEST_CODE)
+            // Check if the permission we want to use is been granted
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+                // Grant the necessary permission
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_CODE)
             } else {
                 //  Necessary permissions are granted
                 startDiscovering()
@@ -44,18 +37,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // When requesting permission is complete, analyze the result and do something corresponding
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
             REQUEST_CODE -> {
                 if ((grantResults.isNotEmpty() && hasAllPermissionsGranted(grantResults))) {
+                    // Permission granted! Start discovering
                     startDiscovering()
+                } else {
+                    // Permissions granted fail...
+                    // Do something when permissions are not granted
                 }
-            }
-            else -> {
-                // Permissions granted fail...
-                // Do something when permissions are not granted
             }
         }
     }
@@ -89,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        unregisterReceiver(bleScanReceiver)
+        unregisterReceiver(btScanReceiver)
     }
 
     private fun registerDiscoveryReceiver() {
@@ -98,6 +92,6 @@ class MainActivity : AppCompatActivity() {
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND)
         intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
-        registerReceiver(bleScanReceiver, intentFilter)
+        registerReceiver(btScanReceiver, intentFilter)
     }
 }
