@@ -1,3 +1,6 @@
+Note: This project is a sample for the question asked in the PTT forum.
+這個專案是為了回答 PTT 上提出的問題所示範的程式碼。
+
 Android 6.0 以後，Danger Permission 需要在執行期(runtime, 也就是 app 開始執行後)再次檢查是否有取得該權限之後才能使用，
 6.0 以前的版本只需要在安裝時和使用者確認即可。
 
